@@ -263,8 +263,8 @@ class AAM_Service_Jwt
      */
     public function validateToken(WP_REST_Request $request)
     {
-        $jwt    = $request->get_param('jwt');
-        $result = AAM_Core_Jwt_Issuer::getInstance()->validateToken($jwt);
+        $jwt    = $this->extractToken();
+        $result = AAM_Core_Jwt_Issuer::getInstance()->validateToken($jwt->jwt);
 
         if ($result->isValid === true) {
             $response = new WP_REST_Response($result);
@@ -311,8 +311,8 @@ class AAM_Service_Jwt
      */
     public function refreshToken(WP_REST_Request $request)
     {
-        $jwt    = $request->get_param('jwt');
-        $result = AAM_Core_Jwt_Issuer::getInstance()->validateToken($jwt);
+        $jwt    = $this->extractToken();
+        $result = AAM_Core_Jwt_Issuer::getInstance()->validateToken($jwt->jwt);
 
         if ($result->isValid === true) {
             if (!empty($result->refreshable)) {
@@ -361,8 +361,8 @@ class AAM_Service_Jwt
      */
     public function revokeToken(WP_REST_Request $request)
     {
-        $jwt    = $request->get_param('jwt');
-        $claims = AAM_Core_Jwt_Issuer::getInstance()->validateToken($jwt);
+        $jwt    = $this->extractToken();
+        $claims = AAM_Core_Jwt_Issuer::getInstance()->validateToken($jwt->jwt);
 
         if ($claims->isValid === true) {
             if ($this->revokeUserToken($claims->userId, $jwt)) {
